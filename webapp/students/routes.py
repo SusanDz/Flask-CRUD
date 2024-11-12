@@ -43,7 +43,7 @@ def search():
 
         # studentls = [db.mst_student.find_one({'student_name': name})]
 
-        student_record = db.mst_student.find({'student_name': name}) # Fetch student from the database
+        student_record = db.mst_student.find({'student_name': { '$regex': name, '$options': 'i' }}) # Fetch student from the database
 
         #If student exists in db
         if student_record:
