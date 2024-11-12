@@ -7,7 +7,7 @@ import base64
 from ..models import mongo
 db = mongo.db
 
-# Display all products in database and navBar options according to user-role
+# Display all students in database
 @student.route('/students', methods=['GET', 'POST'])
 def getStudents():
     filter_type = request.args.get('filter', 'all')  # Default is 'all'
@@ -18,19 +18,16 @@ def getStudents():
     else:
         students = db.mst_student.find()
 
-    #get list of products from collection
+    #get list of students from collection
     studentls = list(students)
 
+    #add subject name to each student
     studentls = addSubjectName(studentls)
-    # for student in studentls:
-    # # Fetch the subject using the subject_key from the student document
-    #     subject = db.mst_subject.find_one({'subject_key': student['subject_key']})
-    #     student['subject_name'] = subject['subject_name']
     print(studentls)
     
-    return render_template('products.html', students = studentls)
+    return render_template('students.html', students = studentls)
 
-# Product Owner provides product details, insert record into Products collection in db
+# Search for student by name
 @student.route('/search', methods=['GET', 'POST'])
 def search():
     if request.method == 'POST':
@@ -43,20 +40,21 @@ def search():
 
         student_record = db.mst_student.find({'student_name': name}) # Fetch student from the database
 
+        #If student exists in db
         if student_record:
             print(student_record)
-            student = addSubjectName([student_record])
-            student_data = {
-            'student_name': student[0]['student_name'],
-            'subject_name': student[0]['subject_name'],
-            'grade': student[0]['grade'],
-            'remarks': student[0]['remarks']
-        }
+            student = addSubjectName(list(student_record))
+            # student_data = {
+            # 'student_name': student[0]['student_name'],
+            # 'subject_name': student[0]['subject_name'],
+            # 'grade': student[0]['grade'],
+            # 'remarks': student[0]['remarks']
+            # }
         else:
             student = None
 
     if student:
-        return jsonify({'student': student_data})
+        return jsonify({'student': student})
     else:
         return jsonify({'student': None})
 
@@ -89,5 +87,6 @@ def addSubjectName(studs):
     # Fetch the subject using the subject_key from the student document
         subject = db.mst_subject.find_one({'subject_key': student['subject_key']})
         student['subject_name'] = subject['subject_name']
+        del student['_id']
 
     return studs
