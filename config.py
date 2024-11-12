@@ -1,7 +1,7 @@
 import os
 class Config:
     SECRET_KEY = 'Final dissertation 2023'
-    MONGO_URI = "mongodb+srv://dev:root@cluster0.x52x0kh.mongodb.net/student_db?retryWrites=true&w=majority&appName=Cluster0"
+    MONGO_URI = "mongodb+srv://dev:os.getenv('DB_PASSWORD')@cluster0.x52x0kh.mongodb.net/student_db?retryWrites=true&w=majority&appName=Cluster0"
 
 
     # establish connection with sqlalchemy
