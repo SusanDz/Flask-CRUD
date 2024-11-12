@@ -8,7 +8,7 @@ from ..models import mongo
 db = mongo.db
 
 @student.route('/', methods=['GET'])
-def getStudents():
+def init():
     
     return "<h1>Test URL</h1>"
 
