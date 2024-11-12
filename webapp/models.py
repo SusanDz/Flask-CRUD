@@ -31,9 +31,8 @@ class Student(BaseModel, UserMixin):
     def get_id(self):
         return str(self._id)
     
-# class Product():
-#     def __init__(self, _id, name, price, picture):
-#         self._id = _id
-#         self.name = name
-#         self.price = price
-#         self.picture = picture
+class Subject():
+    def __init__(self, _id, name):
+        self._id = _id
+        self.subject_name = name
+
