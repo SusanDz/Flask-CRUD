@@ -23,5 +23,6 @@ pytest==8.0.2
 python-dotenv==1.0.1
 tomli==2.0.1
 typing_extensions==4.10.0
+waitress==3.0.1
 Werkzeug==2.2.2
 WTForms==3.0.1
