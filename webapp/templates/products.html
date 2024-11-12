@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block heading %}Students{% endblock %}
+{% block content %}
+<div class="product-container">
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 8px; /* Adjust padding as needed */
+      text-align: left;
+      border-bottom: 1px solid #ddd; /* Adds a line under each row */
+    }
+    form {
+      padding: 20px
+    }
+  </style>
+
+  <form id="searchForm">
+    <label for="studentName">Enter Student Name:</label>
+    <input type="text" id="studentName" name="studentName" required>
+    <button type="submit" id="my-button" class="btn btn-primary">Submit</button>
+  </form>
+
+  <button type="submit"  onclick="window.location.href='/students';" id="my-button" class="btn btn-primary">Show All</button>
+  <div>
+        <a href="/students?filter=all">All Students</a> |
+        <a href="/students?filter=pass">Pass</a> |
+        <a href="/students?filter=fail">Fail</a>
+    </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Student Name</th> <br/>
+        <th>Subject Name</th>
+        <th>Grade</th>
+        <th>Remarks</th>
+      </tr>
+    </thead>
+    <tbody id="studentDetails">
+      <!-- Student details will be loaded here -->
+  <!-- for loop through list of products and create product cards with the product info -->
+      {% if students %}
+        {% for student in students %}
+          <tr>
+          <td>{{ student.student_name }}</td>
+          <td>{{ student.subject_name }}</td>
+          <td>{{ student.grade }}</td>
+          <td>{{ student.remarks }}</td>
+        </tr>
+        {% endfor %}
+      {% else %}
+        <tr><td colspan="4">No students for this filter</td></tr>
+      {% endif %}
+    </tbody>
+  </table>
+
+</div>
+<script>
+  // Add a click event listener to every add to cart button
+  document.querySelectorAll('.btn-primary').forEach(button => {
+    button.addEventListener('click', function() {
+      event.preventDefault(); 
+      console.log('You are searching!')
+      var inputValue = $('#studentName').val();
+      console.log(inputValue);
+
+      // Send an AJAX request to the server
+      $.ajax({
+              url: '/search',
+              type: 'POST',
+              contentType: 'application/json',
+              data: JSON.stringify({ studentName: inputValue }),
+              success: function(data) {
+                  $('#studentDetails').html('');
+                  if (data.student) {
+                      var row = `<tr>
+                          <td>${data.student.student_name}</td>
+                          <td>${data.student.subject_name}</td>
+                          <td>${data.student.grade}</td>
+                          <td>${data.student.remarks}</td>
+                      </tr>`;
+                      $('#studentDetails').append(row);
+                  } else {
+                      $('#studentDetails').append('<tr><td colspan="4">No student found</td></tr>');
+                  }
+              }
+          });
+    });
+  });
+</script>
+{% endblock %}
