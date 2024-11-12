@@ -7,6 +7,11 @@ import base64
 from ..models import mongo
 db = mongo.db
 
+@student.route('/', methods=['GET'])
+def getStudents():
+    
+    return "<h1>Test URL</h1>"
+
 # Display all students in database
 @student.route('/students', methods=['GET', 'POST'])
 def getStudents():
