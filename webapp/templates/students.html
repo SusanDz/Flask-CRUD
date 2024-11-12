@@ -74,14 +74,18 @@
               data: JSON.stringify({ studentName: inputValue }),
               success: function(data) {
                   $('#studentDetails').html('');
-                  if (data.student) {
-                      var row = `<tr>
-                          <td>${data.student.student_name}</td>
-                          <td>${data.student.subject_name}</td>
-                          <td>${data.student.grade}</td>
-                          <td>${data.student.remarks}</td>
-                      </tr>`;
-                      $('#studentDetails').append(row);
+                  if (data.student && Array.isArray(data.student) && data.student.length > 0) {
+                    console.log("You are in")
+                    // Iterate through the array and create table rows for each student
+                    data.student.forEach(function(student) {
+                        var row = `<tr>
+                            <td>${student.student_name}</td>
+                            <td>${student.subject_name}</td>
+                            <td>${student.grade}</td>
+                            <td>${student.remarks}</td>
+                        </tr>`;
+                        $('#studentDetails').append(row);
+                    });
                   } else {
                       $('#studentDetails').append('<tr><td colspan="4">No student found</td></tr>');
                   }

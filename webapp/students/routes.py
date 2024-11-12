@@ -47,8 +47,11 @@ def search():
 
         #If student exists in db
         if student_record:
-            print(student_record)
-            student = addSubjectName(list(student_record))
+            studs = list(student_record)
+            print(studs)
+            student = addSubjectName(studs)
+            print("FINAL")
+            print(student)
             # student_data = {
             # 'student_name': student[0]['student_name'],
             # 'subject_name': student[0]['subject_name'],
@@ -63,35 +66,13 @@ def search():
     else:
         return jsonify({'student': None})
 
-# Customer adds product to cart, insert product id to the users orderProducts list
-# @product.route('/addProductToCart', methods=['POST'])
-# def handle_button_click():
-#     # get id and name of prduct to be added to cart
-#     productId = request.get_json()['id']
-#     productName = request.get_json()['name']
-
-#     # add product id to current user products list
-#     try:
-#         result = db.users.update_one({"username": current_user.username}, {"$push": {"products": ObjectId(productId) }})
-
-#         # if update sucessful send a success message
-#         if result.matched_count == 1 and result.modified_count == 1:
-#             return {'message': 'Sucess, Added '+productName+' to your cart!',  'category':'success'}
-
-#     except (errors.PyMongoError, AttributeError) as e:   
-#         # if error occured send a error message
-#         return {'message': 'Failed to add '+productName+' to your cart!',  'category':'danger'}
-
-# # get product id by searching for product by name and price
-# def getProductId(name, price):
-#     prod = db.products.find_one({"name": name, "price": price})
-#     return prod['_id']
-
 def addSubjectName(studs):
+    print("Yo", studs)
     for student in studs:
     # Fetch the subject using the subject_key from the student document
+        print(student)
         subject = db.mst_subject.find_one({'subject_key': student['subject_key']})
         student['subject_name'] = subject['subject_name']
-        del student['_id']
-
+        student.pop('_id', None)
+        print("Hi", student)
     return studs
