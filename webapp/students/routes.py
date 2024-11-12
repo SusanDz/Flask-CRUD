@@ -106,8 +106,10 @@ def createRecord():
 @student.route('/delete-student', methods=['POST'])
 def deleteRecord():
     data = request.get_json()
+    print(data) 
     student_name = data['studentName']
-    subject_name = data['subject']
+    subject_name = data.get('subject', None)
+    print(student_name, subject_name)
 
     # Student should exist - to delete
     existing_student = db.mst_student.find_one({"student_name": student_name})
@@ -126,10 +128,11 @@ def deleteRecord():
         # Check if the subject exists in the subject table
         subject_collection = db.mst_subject
         existing_subject = subject_collection.find_one({"subject_name": subject_name})
-
+        subject_id = existing_subject['_id']
+        
         if existing_subject:
             # If both student name and subject are provided, delete the specific record
-            result = db.mst_student.delete_one({"student_name": student_name, "subject": subject_name})
+            result = db.mst_student.delete_one({"student_name": student_name, "subject_key": subject_id})
             if result.deleted_count > 0:
                 return {'message': 'Sucess, Deleted a specific record of '+student_name+'!',  'category':'success'}
         else:
@@ -141,12 +144,13 @@ def addSubjectName(studs):
     for student in studs:
     # Fetch the subject using the subject_key from the student document
         print(student)
-        subject = db.mst_subject.find_one({'subject_key': student['subject_key']})
+        subject = db.mst_subject.find_one({'_id': student['subject_key']})
         if subject:
             student['subject_name'] = subject['subject_name']
             student.pop('_id', None)
             print("Added sub name", student)
         else:
+            print("no subject= ", student['subject_key'])
             return [] #no subject found - handle this better
         
     return studs
