@@ -97,7 +97,7 @@ def createRecord():
         # Create the new student with the subject key
         student = {
             "student_name": student_name,
-            "grade": grade,
+            "grade": int(grade),
             "subject_key": subject_id,
             "remarks": grade_val
         }
@@ -108,7 +108,7 @@ def createRecord():
         return render_template('create.html')
     
 @student.route('/create-subject', methods=['POST'])
-def createRecord():
+def createSubRecord():
     if request.method == 'POST':
         data = request.get_json()
         subject_name = data['subjectName']
@@ -215,9 +215,9 @@ def deleteRecord():
         # Check if the subject exists in the subject table
         subject_collection = db.mst_subject
         existing_subject = subject_collection.find_one({"subject_name": subject_name})
-        subject_id = existing_subject['_id']
 
         if existing_subject:
+            subject_id = existing_subject['_id']
             # If both student name and subject are provided, delete the specific record
             result = db.mst_student.delete_one({"student_name": student_name, "subject_key": subject_id})
             if result.deleted_count > 0:
