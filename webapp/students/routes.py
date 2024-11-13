@@ -66,42 +66,110 @@ def search():
     else:
         return jsonify({'student': None})
     
-@student.route('/create-student', methods=['POST'])
+@student.route('/create-student', methods=['GET', 'POST'])
 def createRecord():
-    data = request.get_json()
-    student_name = data['studentName']
-    subject_name = data['subject']
-    grade = data['grade']
+    if request.method == 'POST':
+        data = request.get_json()
+        student_name = data['studentName']
+        subject_name = data['subject']
+        grade = data['grade']
 
-    # Check if the student with the same name already exists
-    existing_student = db.mst_student.find_one({"student_name": student_name})
-    if existing_student:
-        # if error occured send a error message
-        return {'message': 'Student with name '+student_name+' already exist!',  'category':'danger'}
+        # Check if the student with the same name already exists
+        existing_student = db.mst_student.find_one({"student_name": student_name})
+        if existing_student:
+            # if error occured send a error message
+            return {'message': 'Student with name '+student_name+' already exist!',  'category':'danger'}
 
-    # Check if the subject exists in the subject table
-    subject_collection = db.mst_subject
-    existing_subject = subject_collection.find_one({"subject_name": subject_name})
-    
-    if existing_subject:
-        subject_id = existing_subject['_id']
-    else:
-        new_subject = {"subject_name": subject_name}
-        subject_result = subject_collection.insert_one(new_subject)
-        subject_id = subject_result.inserted_id
+        # Check if the subject exists in the subject table
+        subject_collection = db.mst_subject
+        existing_subject = subject_collection.find_one({"subject_name": subject_name})
+        
+        if existing_subject:
+            subject_id = existing_subject['_id']
+        else:
+            new_subject = {"subject_name": subject_name}
+            subject_result = subject_collection.insert_one(new_subject)
+            subject_id = subject_result.inserted_id
 
-    # Get grade val
-    grade_val = calculate_remarks(grade)
+        # Get grade val
+        grade_val = calculate_remarks(grade)
 
-    # Create the new student with the subject key
-    student = {
-        "student_name": student_name,
-        "grade": grade,
-        "subject_key": subject_id,
-        "remarks": grade_val
-    }
-    student_result = db.mst_student.insert_one(student)
-    return {'message': 'Sucess, Added '+student_name+'!',  'category':'success'}
+        # Create the new student with the subject key
+        student = {
+            "student_name": student_name,
+            "grade": grade,
+            "subject_key": subject_id,
+            "remarks": grade_val
+        }
+        student_result = db.mst_student.insert_one(student)
+        return {'message': 'Sucess, Added '+student_name+'!',  'category':'success'}
+    elif request.method == 'GET':
+        # Handle GET request here
+        return render_template('update.html')
+
+@student.route('/update-student', methods=['GET', 'POST'])
+def update_student():
+    if request.method == 'POST':
+        data = request.get_json()
+        # print(data)
+        # print("Oldie:", data.get('old'))
+        old_data = data.get('old')
+        new_data = data.get('new')
+        # print(old_data)
+
+        # First, retrieve the subject ID using the old subject name
+        old_subject = db.mst_subject.find_one({'subject_name': old_data['subject_name']})
+        if not old_subject:
+            return {"message": "This subject does not exist!", "category": "danger"}
+
+
+        # Search for the existing record
+        existing_student = db.mst_student.find_one({
+            'student_name': old_data['student_name'],
+            'subject_key': old_subject['_id'],
+            'grade': int(old_data['grade'])
+        })
+        print(existing_student, old_subject)
+
+        if not existing_student:
+            return {"message": "Student record not found.", "category": "danger"}
+        
+        # If student exists, get the new subject ID for the update
+        new_subject = db.mst_subject.find_one({'subject_name': new_data['subject_name']})
+        if not new_subject:
+            return {"message": "New subject does not exist, create a subject record first!", "category": "danger"}
+
+        # Get grade val
+        grade_val = calculate_remarks(new_data['grade'])
+
+        print("Updating student ID:", existing_student['_id'])
+        print("New data:", {
+            'student_name': new_data['student_name'],
+            'subject_key': new_subject['_id'], 
+            'grade': int(new_data['grade']),
+            'remarks': grade_val
+        })
+
+        # Update the record with new data
+        update_result = mongo.db.mst_student.update_one(
+            {'_id': existing_student['_id']},
+            {'$set': {
+                'student_name': new_data['student_name'],
+                'subject_key': new_subject['_id'], 
+                'grade': int(new_data['grade']),
+                'remarks': grade_val
+            }}
+        )
+
+        if update_result.modified_count == 0:
+            return {"message": "No changes made to the student record.", "category": "warning"}
+        
+        return {"message": "Student record updated successfully.", "category": "success"}
+    elif request.method == 'GET':
+        # Handle GET request here
+        return render_template('update.html')
+
+
 
 @student.route('/delete-student', methods=['POST'])
 def deleteRecord():
@@ -129,7 +197,7 @@ def deleteRecord():
         subject_collection = db.mst_subject
         existing_subject = subject_collection.find_one({"subject_name": subject_name})
         subject_id = existing_subject['_id']
-        
+
         if existing_subject:
             # If both student name and subject are provided, delete the specific record
             result = db.mst_student.delete_one({"student_name": student_name, "subject_key": subject_id})
