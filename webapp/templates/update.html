@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block heading %}Update Page{% endblock %}
+{% block content %}
+<div class="product-container">
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 8px; /* Adjust padding as needed */
+      text-align: left;
+      border-bottom: 1px solid #ddd; /* Adds a line under each row */
+    }
+    form {
+      padding: 20px
+    }
+  </style>
+
+  <!-- Update Form -->
+  <form id="updateStudentForm">
+    <fieldset>
+        <legend>Old Student Details</legend>
+        <label for="oldStudentName">Student Name:</label>
+        <input type="text" id="oldStudentName" name="oldStudentName" required><br>
+        <label for="oldSubjectName">Subject Name:</label>
+        <input type="text" id="oldSubjectName" name="oldSubjectName" required><br>
+        <label for="oldGrade">Grade:</label>
+        <input type="number" id="oldGrade" name="oldGrade" required><br>
+    </fieldset>
+    <fieldset>
+        <legend>New Student Details</legend>
+        <label for="newStudentName">Student Name:</label>
+        <input type="text" id="newStudentName" name="newStudentName" required><br>
+        <label for="newSubjectName">Subject Name:</label>
+        <input type="text" id="newSubjectName" name="newSubjectName" required><br>
+        <label for="newGrade">Grade:</label>
+        <input type="number" id="newGrade" name="newGrade" required><br>
+    </fieldset>
+    <button type="button" id="submitButton">Update Student</button>
+</form>
+
+<script>
+  document.getElementById('submitButton').addEventListener('click', function(event) {
+            event.preventDefault();
+            const oldStudentName = document.getElementById('oldStudentName').value;
+            const oldSubjectName = document.getElementById('oldSubjectName').value;
+            const oldGrade = document.getElementById('oldGrade').value;
+            const newStudentName = document.getElementById('newStudentName').value;
+            const newSubjectName = document.getElementById('newSubjectName').value;
+            const newGrade = document.getElementById('newGrade').value;
+
+            fetch('/update-student', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    old: {
+                        student_name: oldStudentName,
+                        subject_name: oldSubjectName,
+                        grade: oldGrade
+                    },
+                    new: {
+                        student_name: newStudentName,
+                        subject_name: newSubjectName,
+                        grade: newGrade
+                    }
+                })
+            })
+            .then(response => response.json())
+            .then(result => {
+                ms = result.message
+                category = result.category
+                console.log(ms)
+                if(ms) {
+                    // Remove the loading message
+                    // loadingDiv.remove();
+
+                    // Create a new div element to submit a success or error message
+                    var alertDiv = document.createElement("div");
+                    alertDiv.className = "alert alert-"+ category +" alert-dismissible fade show";
+                    alertDiv.setAttribute("role", "alert");
+                    alertDiv.innerHTML = ms+' <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span></button>';
+
+                    // Find the container div to insert the alert
+                    var containerDiv = document.querySelector('.container');
+
+                    // Insert the alert before the container
+                    containerDiv.parentNode.insertBefore(alertDiv, containerDiv);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to update the student record.');
+            });
+        });
+</script>
+{% endblock %}
