@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+{% block heading %}Create Page{% endblock %}
+{% block content %}
+<div class="product-container">
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 8px; /* Adjust padding as needed */
+      text-align: left;
+      border-bottom: 1px solid #ddd; /* Adds a line under each row */
+    }
+    form {
+      padding: 20px
+    }
+  </style>
+
+  <!-- Create Student Form -->
+  <form id="studentForm">
+    <label for="studentName">Student Name:</label>
+    <input type="text" id="studentName" name="studentName" required><br><br>
+    
+    <label for="subject">Subject:</label>
+    <input type="text" id="subject" name="subject" required><br><br>
+    
+    <label for="grade">Grade:</label>
+    <input type="number" id="grade" name="grade" required><br><br>
+    
+    <button type="button" id="createStudBtn">Create Student Record</button>
+  </form>
+
+  <!-- Create Subject Form -->
+  <form id="studentForm">
+    <label for="subjectName">Subject Name:</label>
+    <input type="text" id="subjectName" name="subjectName" required><br><br>
+
+    <button type="button" id="createSubBtn">Create Subject Record</button>
+  </form>
+
+<script>
+  // Helper function to validate input using a regular expression
+  function isValidInput(value) {
+    const whitespaceRegex = /^\s*$/; // Checks for only whitespace
+    const validCharactersRegex = /^[a-zA-Z0-9 ]*$/; // Checks for valid characters
+
+    // Return true if value is not just whitespace and contains only valid characters
+    return !whitespaceRegex.test(value) && validCharactersRegex.test(value);
+  }
+
+  // Helper function to validate if grade is a valid number
+  function isValidGrade(grade) {
+      return !isNaN(grade) && grade !== ''; // Check if grade is a number and not an empty string
+  }
+
+  // Create student button click
+  document.getElementById('createStudBtn').addEventListener('click', function(event) {
+    event.preventDefault();
+        const studentName = document.querySelector("#studentName").value;
+        const subject = document.querySelector("#subject").value;
+        const grade = document.querySelector("#grade").value;
+        console.log(studentName, subject, grade)
+
+        // Validate input fields
+        if (!isValidInput(studentName) || !isValidInput(subject) || !isValidGrade(grade)) {
+            alert("Please enter valid input: no empty spaces, tabs, or special characters.");
+            return;
+        }
+
+        // Display a loading message
+        var loadingDiv = document.createElement("div");
+        loadingDiv.className = "alert alert-warning alert-dismissible fade show";
+        loadingDiv.setAttribute("role", "alert");
+        loadingDiv.innerHTML = 'Please wait - we are adding a record!';
+
+        // Find the container div to insert the alert
+        var containerDiv = document.querySelector('.container');
+        containerDiv.parentNode.insertBefore(loadingDiv, containerDiv);
+
+
+        // Send AJAX request to the backend
+        fetch('/create-student', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ studentName, subject, grade })
+        })
+        .then(response => response.json())
+        .then(result => {
+            // alert('Student added successfully');
+            // window.location.reload(); // Refresh the page
+            ms = result.message
+            category = result.category
+            console.log(ms)
+            if(ms) {
+                // Remove the loading message
+                loadingDiv.remove();
+
+                // Create a new div element to submit a success or error message
+                var alertDiv = document.createElement("div");
+                alertDiv.className = "alert alert-"+ category +" alert-dismissible fade show";
+                alertDiv.setAttribute("role", "alert");
+                alertDiv.innerHTML = ms+' <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span></button>';
+
+                // Find the container div to insert the alert
+                var containerDiv = document.querySelector('.container');
+
+                // Insert the alert before the container
+                containerDiv.parentNode.insertBefore(alertDiv, containerDiv);
+            }
+        })
+        .catch(error => {
+            alert('Error: ' + error.message);
+        });
+    });
+
+    // Create subject button click
+  document.getElementById('createSubBtn').addEventListener('click', function(event) {
+    event.preventDefault();
+        const subjectName = document.querySelector("#subjectName").value;
+        console.log(subject)
+
+        // Validate input fields
+        if (!isValidInput(subjectName)) {
+            alert("Please enter valid input: no empty spaces, tabs, or special characters.");
+            return;
+        }
+
+        // Display a loading message
+        var loadingDiv = document.createElement("div");
+        loadingDiv.className = "alert alert-warning alert-dismissible fade show";
+        loadingDiv.setAttribute("role", "alert");
+        loadingDiv.innerHTML = 'Please wait - we are adding a record!';
+
+        // Find the container div to insert the alert
+        var containerDiv = document.querySelector('.container');
+        containerDiv.parentNode.insertBefore(loadingDiv, containerDiv);
+
+
+        // Send AJAX request to the backend
+        fetch('/create-subject', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ subjectName })
+        })
+        .then(response => response.json())
+        .then(result => {
+            // alert('Student added successfully');
+            // window.location.reload(); // Refresh the page
+            ms = result.message
+            category = result.category
+            console.log(ms)
+            if(ms) {
+                // Remove the loading message
+                loadingDiv.remove();
+
+                // Create a new div element to submit a success or error message
+                var alertDiv = document.createElement("div");
+                alertDiv.className = "alert alert-"+ category +" alert-dismissible fade show";
+                alertDiv.setAttribute("role", "alert");
+                alertDiv.innerHTML = ms+' <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span></button>';
+
+                // Find the container div to insert the alert
+                var containerDiv = document.querySelector('.container');
+
+                // Insert the alert before the container
+                containerDiv.parentNode.insertBefore(alertDiv, containerDiv);
+            }
+        })
+        .catch(error => {
+            alert('Error: ' + error.message);
+        });
+    });
+
+</script>
+{% endblock %}
