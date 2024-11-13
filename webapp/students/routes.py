@@ -87,10 +87,10 @@ def createRecord():
         grade = data['grade']
 
         # Check if the student with the same name already exists
-        existing_student = db.mst_student.find_one({"student_name": student_name})
+        existing_student = db.mst_student.find_one({"student_name": student_name, "subject_name": subject_name})
         if existing_student:
             # if error occured send a error message
-            return {'message': 'Student with name '+student_name+' already exists!',  'category':'danger'}
+            return {'message': 'Student with name '+student_name+' and subject '+subject_name+' already exists!',  'category':'danger'}
 
         # Check if the subject exists in the subject table
         subject_collection = db.mst_subject
