@@ -227,7 +227,7 @@ def deleteRecord():
                 return {'message': 'Subject name provided does not exist (Deleting records is case sensitive)',  'category':'danger'}
     elif request.method == 'GET':
         # Handle GET request here
-        return render_template('update.html')
+        return render_template('delete.html')
 
 
 def addSubjectName(studs):
