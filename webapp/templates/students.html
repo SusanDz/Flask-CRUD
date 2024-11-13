@@ -17,22 +17,8 @@
     }
   </style>
 
-  <!-- Create Form -->
-  <!-- <form id="studentForm">
-    <label for="studentName">Student Name:</label>
-    <input type="text" id="studentName" name="studentName" required><br><br>
-    
-    <label for="subject">Subject:</label>
-    <input type="text" id="subject" name="subject" required><br><br>
-    
-    <label for="grade">Grade:</label>
-    <input type="number" id="grade" name="grade" required><br><br>
-    
-    <button type="button" id="createBtn">Create</button>
-  </form> -->
-
   <!-- Delete student -->
-  <form id="delstudentForm">
+  <!-- <form id="delstudentForm">
     <label for="studentName">Student Name:</label>
     <input type="text" id="delstudentName" name="studentName" required><br><br>
 
@@ -40,7 +26,7 @@
     <input type="text" id="delsubject" name="subject" required><br><br>
     
     <button type="button" id="deleteBtn">Delete</button>
-  </form>
+  </form> -->
 
   <form id="searchForm">
     <label for="searchStud">Enter Student Name:</label>
@@ -135,67 +121,7 @@
 
   // Add a event listener to create a record
   document.addEventListener("DOMContentLoaded", function() {
-      // // Add event listener for the CREATE button
-      // document.querySelector("#createBtn").addEventListener("click", function() {
-      //     const studentName = document.querySelector("#studentName").value;
-      //     const subject = document.querySelector("#subject").value;
-      //     const grade = document.querySelector("#grade").value;
-      //     console.log(studentName, subject, grade)
-
-      //     // Validate input fields
-      //     if (!isValidInput(studentName) || !isValidInput(subject) || !isValidGrade(grade)) {
-      //         alert("Please enter valid input: no empty spaces, tabs, or special characters.");
-      //         return;
-      //     }
-
-      //     // Display a loading message
-      //     var loadingDiv = document.createElement("div");
-      //     loadingDiv.className = "alert alert-warning alert-dismissible fade show";
-      //     loadingDiv.setAttribute("role", "alert");
-      //     loadingDiv.innerHTML = 'Please wait - we are adding a record!';
-
-      //     // Find the container div to insert the alert
-      //     var containerDiv = document.querySelector('.container');
-      //     containerDiv.parentNode.insertBefore(loadingDiv, containerDiv);
-
-
-      //     // Send AJAX request to the backend
-      //     fetch('/create-student', {
-      //         method: 'POST',
-      //         headers: {
-      //             'Content-Type': 'application/json'
-      //         },
-      //         body: JSON.stringify({ studentName, subject, grade })
-      //     })
-      //     .then(response => response.json())
-      //     .then(result => {
-      //         // alert('Student added successfully');
-      //         // window.location.reload(); // Refresh the page
-      //         ms = result.message
-      //         category = result.category
-      //         console.log(ms)
-      //         if(ms) {
-      //              // Remove the loading message
-      //             loadingDiv.remove();
-
-      //             // Create a new div element to submit a success or error message
-      //             var alertDiv = document.createElement("div");
-      //             alertDiv.className = "alert alert-"+ category +" alert-dismissible fade show";
-      //             alertDiv.setAttribute("role", "alert");
-      //             alertDiv.innerHTML = ms+' <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span></button>';
-
-      //             // Find the container div to insert the alert
-      //             var containerDiv = document.querySelector('.container');
-
-      //             // Insert the alert before the container
-      //             containerDiv.parentNode.insertBefore(alertDiv, containerDiv);
-      //         }
-      //     })
-      //     .catch(error => {
-      //         alert('Error: ' + error.message);
-      //     });
-      // });
-
+     
 
       // DELETE student
       document.querySelector("#deleteBtn").addEventListener("click", function() {

@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block heading %}Update Page{% endblock %}
+{% block content %}
+<div class="product-container">
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 8px; /* Adjust padding as needed */
+      text-align: left;
+      border-bottom: 1px solid #ddd; /* Adds a line under each row */
+    }
+    form {
+      padding: 20px
+    }
+  </style>
+
+    <!-- Delete student -->
+    <form id="delstudentForm">
+        <label for="studentName">Student Name:</label>
+        <input type="text" id="delstudentName" name="studentName" required><br><br>
+    
+        <label for="subject">Subject:</label>
+        <input type="text" id="delsubject" name="subject" required><br><br>
+        
+        <button type="button" id="deleteBtn">Delete</button>
+    </form>
+
+<script>
+    // Helper function to validate input using a regular expression
+    function isValidInput(value) {
+        const whitespaceRegex = /^\s*$/; // Checks for only whitespace
+        const validCharactersRegex = /^[a-zA-Z0-9 ]*$/; // Checks for valid characters
+
+        // Return true if value is not just whitespace and contains only valid characters
+        return !whitespaceRegex.test(value) && validCharactersRegex.test(value);
+    }
+
+    document.getElementById('deleteBtn').addEventListener('click', function(event) {
+        event.preventDefault();
+        const studentName = document.querySelector("#delstudentName").value;
+        const subject = document.querySelector("#delsubject").value;
+        console.log(studentName, subject)
+
+        // Validate input fields
+        if (!isValidInput(studentName) || !isValidInput(subject)) {
+              alert("Please enter valid input: no empty spaces, tabs, or special characters.");
+              return;
+        }
+
+        // Display a loading message
+        var loadingDiv = document.createElement("div");
+        loadingDiv.className = "alert alert-warning alert-dismissible fade show";
+        loadingDiv.setAttribute("role", "alert");
+        loadingDiv.innerHTML = 'Please wait - we are deleting a record!';
+
+        // Find the container div to insert the alert
+        var containerDiv = document.querySelector('.container');
+        containerDiv.parentNode.insertBefore(loadingDiv, containerDiv);
+
+
+        // Send AJAX request to the backend
+        fetch('/delete-student', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ studentName, subject })
+        })
+        .then(response => response.json())
+        .then(result => {
+            ms = result.message
+            category = result.category
+            console.log(ms)
+            if(ms) {
+                // Remove the loading message
+                loadingDiv.remove();
+
+                // Create a new div element to submit a success or error message
+                var alertDiv = document.createElement("div");
+                alertDiv.className = "alert alert-"+ category +" alert-dismissible fade show";
+                alertDiv.setAttribute("role", "alert");
+                alertDiv.innerHTML = ms+' <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span></button>';
+
+                // Find the container div to insert the alert
+                var containerDiv = document.querySelector('.container');
+
+                // Insert the alert before the container
+                containerDiv.parentNode.insertBefore(alertDiv, containerDiv);
+            }
+        })
+        .catch(error => {
+            alert('Error: ' + error.message);
+        });
+    });
+</script>
+{% endblock %}
