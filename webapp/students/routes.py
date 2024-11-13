@@ -32,6 +32,18 @@ def getStudents():
     
     return render_template('students.html', students = studentls)
 
+# Display all subjects in database
+@student.route('/view-subjects', methods=['GET'])
+def getSubjects():
+    subjects = db.mst_subject.find()
+
+    #get list of students from collection
+    subls = list(subjects)
+    subjectls = popID(subls)
+    print(subls)
+    
+    return render_template('view.html', subjects = subjectls)
+
 # Search for student by name
 @student.route('/search', methods=['GET', 'POST'])
 def search():
@@ -252,3 +264,9 @@ def calculate_remarks(grade):
     grade_int = int(grade)
     # Return "PASS" if the grade is 75 or higher, otherwise "FAIL"
     return "PASS" if grade_int >= 75 else "FAIL"
+
+def popID(studs):
+    for item in studs:
+        item.pop('_id', None)
+        
+    return studs

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block heading %}Home Page{% endblock %}
+{% block content %}
+<div class="product-container">
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 8px; /* Adjust padding as needed */
+      text-align: left;
+      border-bottom: 1px solid #ddd; /* Adds a line under each row */
+    }
+    form {
+      padding: 20px
+    }
+  </style>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Subject Name</th>
+      </tr>
+    </thead>
+    <tbody id="subjectDetails">
+      <!-- Student details will be loaded here -->
+  <!-- for loop through list of products and create product cards with the product info -->
+        {% if subjects %}
+            {% for sub in subjects %}
+            <tr>
+            <td>{{ sub.subject_name }}</td>
+            </tr>
+            {% endfor %}
+        {% else %}
+        <tr><td colspan="4">No subjects for this filter</td></tr>
+      {% endif %}
+    </tbody>
+  </table>
+
+</div>
+
+{% endblock %}
