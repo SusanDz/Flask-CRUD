@@ -78,7 +78,7 @@ def createRecord():
         existing_student = db.mst_student.find_one({"student_name": student_name})
         if existing_student:
             # if error occured send a error message
-            return {'message': 'Student with name '+student_name+' already exist!',  'category':'danger'}
+            return {'message': 'Student with name '+student_name+' already exists!',  'category':'danger'}
 
         # Check if the subject exists in the subject table
         subject_collection = db.mst_subject
@@ -105,7 +105,26 @@ def createRecord():
         return {'message': 'Sucess, Added '+student_name+'!',  'category':'success'}
     elif request.method == 'GET':
         # Handle GET request here
-        return render_template('update.html')
+        return render_template('create.html')
+    
+@student.route('/create-subject', methods=['POST'])
+def createRecord():
+    if request.method == 'POST':
+        data = request.get_json()
+        subject_name = data['subjectName']
+
+        # Check if the subject exists in the subject table
+        subject_collection = db.mst_subject
+        existing_subject = subject_collection.find_one({"subject_name": subject_name})
+        if existing_subject:
+            # if error occured send a error message
+            return {'message': 'Student with name '+subject_name+' already exists!',  'category':'danger'}
+
+        # Insert a new subject if it does not exist
+        new_subject = {"subject_name": subject_name}
+        subject_result = subject_collection.insert_one(new_subject)
+
+        return {'message': 'Sucess, Added '+subject_name+'!',  'category':'success'}
 
 @student.route('/update-student', methods=['GET', 'POST'])
 def update_student():
